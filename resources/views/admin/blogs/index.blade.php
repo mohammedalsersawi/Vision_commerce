@@ -12,83 +12,16 @@
                         <h3 class="m-0">All Blogs</h3>
                         <a href={{ route('admin.blogs.create') }} class="btn btn-dark px-4" data-toggle="modal"
                             data-target="#exampleModal">Add New Blog</a>
-        {{-- modal to add blog --}}
-                        <div class="modal fade" id="exampleModal" tabindex="" aria-labelledby="exampleModalLabel"
-                            aria-hidden="">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Change Role</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <form action="" method="POST" enctype="multipart/form-data" id="comment_form">
-                                        @csrf
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <input type="text" placeholder="Your name" name="name" id="name"
-                                                    class="form-control @error('name') is-invalid @enderror">
 
-                                                @error('name')
-                                                    <small class="invalid-feedback">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-
-
-                                            <div class="mb-3">
-                                                <textarea placeholder="Your content" name="content" id="content"
-                                                    class="form-control @error('content') is-invalid @enderror"></textarea>
-                                                @error('content')
-                                                    <small class="invalid-feedback">{{ $message }}</small>
-                                                @enderror
-
-
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="">Image</label>
-                                                <input type="file" name="image" id="image"
-                                                    class="form-control @error('category_id') is-invalid @enderror">
-                                                @error('image')
-                                                    <small class="invalid-feedback">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-
-
-                                            <div class="mb-3">
-                                                <label for="">category</label>
-                                                <select name="category_id" id='category_id'
-                                                    class="form-control @error('category_id') is-invalid @enderror">
-                                                    <option value="">--Select--</option>
-                                                    @foreach ($categories as $category)
-                                                        <option value="{{ $category->id }}">
-                                                            {{ $category->name }}
-
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('category_id')
-                                                    <small class="invalid-feedback">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Close</button>
-                                                <button type="submit" id="add_blog" class=" btn btn-primary">Save
-                                                    changes</button>
-                                            </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                        </div>
-                        {{-- End model to add blog --}}
+                      @include('admin.blogs.model')
 
                     </div>
                 </div>
+
                 <div class="card-body">
-                    @include('admin.blogs.table', ['blogs' => $blogs])
+                    <div class="alert alert-danger" style="display:none"></div>
+
+                 @include('admin.blogs.table')
 
                 </div>
             </div>
@@ -98,47 +31,54 @@
 @stop
 
 @section('scripts')
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        $(".alert").fadeTo(2000, 500).slideUp(500, function() {
-            $(".alert").slideUp(500);
-        });
-    </script>
-    <script>
-        $('body').on('click', '#add_blog', function(e) {
+        jQuery(document).ready(function(){
+            jQuery(document).on('submit' , '#form' , function(e){
             e.preventDefault();
-
-            // var Name = $('#comment_form input["name"]').val();
-            // var Content = $('#comment_form input["content"]').val();
-            // var Image = $('#comment_form input["image"]').val();
-            // var Category = $('#comment_form input["category_id"]').val();
-            var Name = $('#name').val();
-            var Content = $('#content').val();
-            var Image = $('#image').val();
-            var Category = $('#category_id').val();
-            $.ajax({
+             const form = this;
+                $('.text-danger').text('');
+                // $('#image_error').text('');
+                // $('#content_error').text('');
+                // $('#category_id_error').text('');
+             jQuery.ajax({
                 type: 'post',
-                enctype: "multipart/form-data",
                 url: '{{ route('admin.blogs.store') }}',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    name: Name,
-                    content: Content,
-                    image: Image,
-                    category_id: Category,
-                },
-                success: function(res) {
-                    $('.card-body').html(res);
-                    $('#exampleModal').modal('hide')
-                    $().alert(4)
+                data:new FormData(form),
+                    processData:false,
+                    contentType:false,
+                    success: function(res) {
+
+                        $('.card-body').html(res);
+                        $('#exampleModal').modal('hide');
+                        $("#form")[0].reset();
+                        swal.fire(
+                            'Added',
+                            'Blog Added success',
+                            'success'
+                        )
+
 
                 },
+                error: function(reject) {
+                    var response = $.parseJSON(reject.responseText);
+                    $.each(response.errors, function (key, val) {
+                        $("#" + key + "_error").text(val[0]);
+                    });
+
+
+
+                }
 
             });
-
+        });
 
 
         });
     </script>
+
+
 
 
 

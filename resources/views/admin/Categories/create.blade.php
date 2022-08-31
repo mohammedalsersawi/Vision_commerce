@@ -1,4 +1,4 @@
-@extends('admin.master')
+@extends('admin.mast er')
 
 @section('title', 'Add New Category ')
 
@@ -30,7 +30,7 @@
                             <label for="">Parent</label>
                             <select name="parent_id" class="form-control">
                                 <option value="">--Select--</option>
-                                @foreach ($categories as $category)
+                                @foreach ($AddParent as $category)
                                     <option value="{{ $category->id }}">
                                         {{ $category->name }}
                                     </option>

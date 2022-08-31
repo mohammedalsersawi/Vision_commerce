@@ -348,7 +348,7 @@
                         @foreach ($products as $prod)
                         <div class="col-lg-4 col-md-6 col-sm-6">
                             <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="{{ $prod->image }}">
+                                <div class="product__item__pic set-bg" data-setbg="{{ asset('uploads/images/'.$prod->image) }}">
                                 </div>
                                 <div class="product__item__text">
                                     <h6><a href="{{ route('site.shop_details' ,$prod->slug ) }}">{{ $prod->name }}</a></h6>

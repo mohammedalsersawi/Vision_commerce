@@ -16,7 +16,7 @@
 
                  <div class="col-lg-3">
                     <div class="categories__item set-bg"
-                    data-setbg="{{ asset($item->image) }}" >
+                    data-setbg="{{ asset('uploads/CategoryImage/'.$item->image) }}" >
                     <h5><a href="{{ route('site.category_single' ,$item->slug) }}">{{ $item->name }}
                     </a></h5>
                   {{--
@@ -56,7 +56,7 @@
                 @foreach ( $category->products as $item )
                 <div class="col-lg-3 col-md-4 col-sm-6 mix cat-{{ $category->id }}">
                     <div class="featured__item">
-                        <div class="featured__item__pic set-bg" data-setbg="{{asset($item->image) }}">
+                        <div class="featured__item__pic set-bg" data-setbg="{{ asset('uploads/images/'.$item->image) }}">
 
                         </div>
                         <div class="featured__item__text">

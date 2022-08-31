@@ -48,32 +48,40 @@ class blogsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+
+
+
     public function store(Request $request)
     {
-
-
         $request->validate([
-        'name' => 'required',
-        'content' => 'required',
-        // 'image' => 'required',
-        'category_id' => 'required',
+            'name' => 'required',
+            'content' => 'required',
+            'image' => 'required',
+            'category_id' => 'required',
         ]);
-        // $imagename = 'blog_'.time().'_'.$request->file('image')->getClientOriginalName();
 
-        // $request->file('image')->move(public_path('uploads/blogimage') , $imagename);
+        $path = 'uploads/blogimage/';
+        $file = $request->file('image');
+        $file_name = time().'_'.$file->getClientOriginalName();
+
+
+        $upload = $file->move(public_path('uploads/blogimage'), $file_name);
+
 
         Blog::create([
         'name' => request()->name,
         'slug'  => Str::slug($request->name),
         'content'  => $request->content,
-        // 'image'  =>   $imagename,
+        'image'  =>   $file_name,
         'category_id'  => $request->category_id,
 
         ]);
+
         $blogs = Blog::latest()->paginate(5);
-        return view('admin.blogs.table' , compact('blogs'))
-        ->with('msg' , 'Blog update successfully')
-        ->with('type' , 'info')
+        $categories  = Category::all();
+        return view('admin.blogs.table' , compact('categories' , 'blogs'))
+        ->with('msg', 'category updated successfully')
         ->render();
 
 
@@ -157,7 +165,7 @@ class blogsController extends Controller
     public function destroy($id)
     {
         $blog = Blog::findOrFail($id);
-        File::delete(public_path('uploads/images/'.$blog->image));
+        File::delete(public_path('uploads/blogimage/'.$blog->image));
         $blog->delete();
 
         return redirect()->route('admin.blogs.index')

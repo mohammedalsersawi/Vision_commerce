@@ -24,11 +24,18 @@ class AdminController extends Controller
 
     public function users()
     {
-        if(request()->has('search')) {
-            $users = User::where('type', 'user')->where('name', 'like', '%'. request()->search . '%')->orWhere('email', 'like', '%'. request()->search . '%')->latest()->paginate(10);
+        if(request()->filled('search')) {
+             $users = User::where('type', 'user')
+             ->where(function($query){
+                $query->where('name',  'like', '%'. request()->search . '%')
+                ->orWhere('email', 'like', '%'. request()->search . '%');
+             })
+             ->latest()
+             ->paginate(10);
         }else {
             $users = User::where('type', 'user')->latest()->paginate(10);
         }
+    //    return $users;
         return view('admin.users', compact('users'));
     }
 

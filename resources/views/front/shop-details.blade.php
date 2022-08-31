@@ -38,7 +38,7 @@
                 <div class="col-lg-6 col-md-6">
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
-                            <img class="product__details__pic__item--large" src="{{ $product->image }}" alt="">
+                            <img class="product__details__pic__item--large" src="{{ asset('uploads/images/'.$product->image) }}" alt="">
                         </div>
                         @if ($product->album)
                             @php
@@ -172,7 +172,7 @@
                 @foreach ($related as $item)
                     <div class="col-lg-3 col-md-4 col-sm-6">
                         <div class="product__item">
-                            <div class="product__item__pic set-bg" data-setbg="{{ $item->image }}">
+                            <div class="product__item__pic set-bg" data-setbg="{{ asset('uploads/images/'.$item->image) }}">
                             </div>
                             <div class="product__item__text">
                                 <h6><a href="{{ route('site.shop_details', $item->slug) }}">{{ $item->name }}</a></h6>

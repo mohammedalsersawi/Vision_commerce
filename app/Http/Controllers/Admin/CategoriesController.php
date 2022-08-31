@@ -21,7 +21,9 @@ class CategoriesController extends Controller
         } else {
             $categories = Category::latest('id')->paginate(6);
         }
-        return view('admin.Categories.index', compact('categories'));
+        $AddParent = Category::all();
+
+        return view('admin.Categories.index', compact('categories' , 'AddParent'));
     }
 
     /**
@@ -32,8 +34,9 @@ class CategoriesController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('admin.Categories.create', compact('categories'));
+        return view('admin.Categories.model', compact('categories'));
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -42,21 +45,34 @@ class CategoriesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request){
- //return $request;
-         $request->validate([
+
+        $request->validate([
             'name' => 'required|min:3|max:30',
+            'image' => 'required',
             'parent_id' => 'nullable|exists:categories,id'
         ]);
 
+        $file = $request->file('image');
+        $filename = time() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('uploads/CategoryImage'), $filename);
+
         Category::create([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'parent_id' => $request->parent_id,
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'image' => $filename,
+                'parent_id' => $request->parent_id,
         ]);
 
-        return redirect()->route('admin.categories.index')
-            ->with('msg', 'category added successfully')
-            ->with('type', 'success');
+
+        $categories = Category::latest()->paginate(5);
+
+
+        return view('admin.Categories.table' , compact('categories'))->render();
+
+
+ //return $request;
+
+
     }
 
     /**
