@@ -16,10 +16,24 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard');
-
+        $o_count = Order::count();
+        $u_count = User::count();
+        $c_count = Category::count();
+        $p_count = Product::count();
+        $b_count = Blog::count();
+        $t_count = Testimonial::count();
+        return view('admin.dashboard', compact('o_count', 'u_count', 'c_count', 'p_count', 'b_count', 't_count'));
     }
-
+    public function orders()
+    {
+        $orders = Order::latest()->paginate(10);
+        return view('admin.orders', compact('orders'));
+    }
+    public function orders_details($id)
+    {
+        $order = Order::find($id);
+        return view('admin.orders_details', compact('order'));
+    }
 
 
     public function users()

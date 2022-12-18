@@ -51,7 +51,6 @@ class ProductsController extends Controller
     {
         $request->validate([
             'name' => 'required|min:3|max:30',
-            'image' => 'required|image|mimes:png,jpg',
             'content' => 'required|max:500',
             'price' => 'required',
             'quantity' => 'required',
@@ -161,7 +160,7 @@ class ProductsController extends Controller
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'image' => $imagename,
-            'content' => $request->content,
+           'content' => $request->content,
             'price' => $request->price,
             'quantity' => $request->quantity,
             'discount' => $request->discount,
@@ -194,7 +193,6 @@ class ProductsController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
-
         File::delete(public_path('uploads/images/' . $product->image));
 
         $product->delete();
@@ -203,3 +201,4 @@ class ProductsController extends Controller
             ->with('type', 'danger');
     }
 }
+

@@ -32,6 +32,9 @@ Route::prefix('admin')->middleware('auth' , 'admin')->name('admin.')->group(func
     Route::resource('roles' , RoleController::class);
     Route::get('/admins', [AdminController::class, 'admins'])->name('admins');
     Route::put('/admins/{id}', [AdminController::class, 'admins_edit'])->name('admins_edit');
+    Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
+
+    Route::get('/orders/{id}', [AdminController::class, 'orders_details'])->name('orders.details');
 
     //----------------
 

@@ -148,7 +148,6 @@
                     $("#exampleModal").modal('hide');
                     $('.card-body').html(res);
 
-
                 },
                 error: function(reject) {
                     var response = $.parseJSON(reject.responseText);

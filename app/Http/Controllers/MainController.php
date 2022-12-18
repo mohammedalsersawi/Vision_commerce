@@ -13,6 +13,8 @@ use App\Models\Category;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Mail\InvoiceMail;
 use App\Mail\ContactUsMail;
+use App\Models\User;
+use App\Notifications\NewOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -21,14 +23,14 @@ class MainController extends Controller
 {
     public function index()
     {
-        $best_discount = Product::whereNotNull('discount')->orderBy('discount' , 'desc')->first();
-     //   dd($best_discount);
+        $best_discount = Product::whereNotNull('discount')->orderBy('discount', 'desc')->first();
+        //   dd($best_discount);
         $categories = Category::all();
 
         $latest_categories = Category::latest('id')->take(5)->get();
-      // dd($latest_categories);
+        // dd($latest_categories);
 
-        return view('front.index' , compact('best_discount' , 'categories' , 'latest_categories'));
+        return view('front.index', compact('best_discount', 'categories', 'latest_categories'));
     }
 
 
@@ -44,11 +46,11 @@ class MainController extends Controller
     {
         $product = Product::where('slug', $slug)->first();
 
-        $related = Product::where('category_id' , $product->category_id)
-        ->where('id' , '<>' , $product->id)->take(4)->get();
+        $related = Product::where('category_id', $product->category_id)
+            ->where('id', '<>', $product->id)->take(4)->get();
 
 
-        return view('front.shop-details', compact('product' , 'related'));
+        return view('front.shop-details', compact('product', 'related'));
     }
 
 
@@ -60,7 +62,7 @@ class MainController extends Controller
         $category = Category::where('slug', $slug)->first();
         $products = $category->products()->paginate(6);
 
-        return view('front.shop',compact('products'));
+        return view('front.shop', compact('products'));
     }
 
 
@@ -68,20 +70,20 @@ class MainController extends Controller
 
     public function blog()
     {
-      //  $blogs = Blog::latest('id')->paginate(6);
-          $blogs = Blog::orderBy('id' , 'desc')->paginate(6);
-        return view('front.blog' , compact('blogs'));
+        //  $blogs = Blog::latest('id')->paginate(6);
+        $blogs = Blog::orderBy('id', 'desc')->paginate(6);
+        return view('front.blog', compact('blogs'));
     }
 
     public function blog_single($slug)
     {
-        $blog  = Blog::where('slug' , $slug)->first();
-        $related = Blog::where('category_id' , $blog->category_id)
-        ->where('id' , '<>' ,$blog->id)
-       //->limit(3)
-        ->take(3)
-        ->get();
-        return view('front.blog_single' , compact('blog' , 'related'));
+        $blog  = Blog::where('slug', $slug)->first();
+        $related = Blog::where('category_id', $blog->category_id)
+            ->where('id', '<>', $blog->id)
+            //->limit(3)
+            ->take(3)
+            ->get();
+        return view('front.blog_single', compact('blog', 'related'));
     }
 
 
@@ -89,16 +91,16 @@ class MainController extends Controller
 
     public function add_comment()
     {
-      Comment::create([
-        'comment' => request()->comment,
-        'blog_id' => request()->blog_id,
-        'user_id' => Auth::id(),
-      ]);
-      $comments = Blog::find(request()->blog_id)->comments()
-      ->orderBy('id','desc')->get();
+        Comment::create([
+            'comment' => request()->comment,
+            'blog_id' => request()->blog_id,
+            'user_id' => Auth::id(),
+        ]);
+        $comments = Blog::find(request()->blog_id)->comments()
+            ->orderBy('id', 'desc')->get();
 
-      return view('front.parts.comment_list' , compact('comments'))
-      ->render();
+        return view('front.parts.comment_list', compact('comments'))
+            ->render();
     }
 
 
@@ -107,12 +109,12 @@ class MainController extends Controller
 
     public function delete_comment($id)
     {
-    $comment = Comment::findOrFail($id);
-    if($comment->user_id == Auth::id()){
-        $comment->delete();
-    }else {
-        return '!!!!!!!';
-    }
+        $comment = Comment::findOrFail($id);
+        if ($comment->user_id == Auth::id()) {
+            $comment->delete();
+        } else {
+            return '!!!!!!!';
+        }
 
         return redirect()->back();
     }
@@ -126,14 +128,13 @@ class MainController extends Controller
 
     public function contactus(Request $request)
     {
-       $request->validate([
-        'name'  =>  'required',
-        'email' =>  'required',
-        'message' => 'required'
-       ]);
-       Mail::to('admin@hamo.com')->send(new ContactUsMail($request->except('_token')));
-       return redirect()->back();
-
+        $request->validate([
+            'name'  =>  'required',
+            'email' =>  'required',
+            'message' => 'required'
+        ]);
+        Mail::to('admin@hamo.com')->send(new ContactUsMail($request->except('_token')));
+        return redirect()->back();
     }
 
     public function purchase_product(Request $request, $id)
@@ -141,37 +142,36 @@ class MainController extends Controller
 
         $product = Product::find($id);
 
-        $cart = Cart::where('user_id' , Auth::id())
-        ->whereNull('order_id')
-        ->where('product_id' , $id)->first();
+        $cart = Cart::where('user_id', Auth::id())
+            ->whereNull('order_id')
+            ->where('product_id', $id)->first();
 
-        if($cart){
+        if ($cart) {
             $cart->update(['quantity' => $cart->quantity + $request->quantity]);
         } else {
-        Cart::create([
-            'price'  => $product->price,
-            'quantity' => $request->quantity,
-            'user_id'  => Auth::id(),
-            'product_id' => $id
-        ]);
-    }
-       return redirect()->route('site.cart');
+            Cart::create([
+                'price'  => $product->price,
+                'quantity' => $request->quantity,
+                'user_id'  => Auth::id(),
+                'product_id' => $id
+            ]);
+        }
+        return redirect()->route('site.cart');
     }
 
 
 
     public function cart()
     {
-        $carts = Cart::where('user_id' , Auth::id())->whereNull('order_id')->get();
-        return view('front.cart' , compact('carts'));
+        $carts = Cart::where('user_id', Auth::id())->whereNull('order_id')->get();
+        return view('front.cart', compact('carts'));
     }
 
 
     public function delete_product($id)
     {
-     Cart::destroy($id);
-     return redirect()->back();
-
+        Cart::destroy($id);
+        return redirect()->back();
     }
 
 
@@ -181,20 +181,20 @@ class MainController extends Controller
 
 
         $items = request()->items;
-        foreach($items as $item){
-        $new_qty = $item[0];
-        $p_id = $item[1];
+        foreach ($items as $item) {
+            $new_qty = $item[0];
+            $p_id = $item[1];
 
-        Cart::where('product_id' , $p_id)
-        ->where('user_id' , Auth::id())
-        ->update([
-            'quantity' => $new_qty
-        ]);
+            Cart::where('product_id', $p_id)
+                ->where('user_id', Auth::id())
+                ->update([
+                    'quantity' => $new_qty
+                ]);
         }
 
-        $carts = Cart::where('user_id' , Auth::id())->whereNull('order_id')->get();
+        $carts = Cart::where('user_id', Auth::id())->whereNull('order_id')->get();
 
-        return view('front.parts.cart_items' , compact('carts'))->render();
+        return view('front.parts.cart_items', compact('carts'))->render();
 
         //->render();  تقوم بجلب كود html
 
@@ -205,39 +205,40 @@ class MainController extends Controller
 
     public function checkout()
     {
-        $carts = Cart::where('user_id' , Auth::id())->whereNull('order_id')->get();
+        $carts = Cart::where('user_id', Auth::id())->whereNull('order_id')->get();
 
-            $amount = 0;
-            foreach ($carts as $cart ) :
+        $amount = 0;
+        foreach ($carts as $cart) :
             $amount += $cart->quantity * $cart->price;
-            endforeach;
+        endforeach;
 
 
-            $url = "https://eu-test.oppwa.com/v1/checkouts";
-            $data = "entityId=8a8294174b7ecb28014b9699220015ca" .
-                        "&amount=$amount" .
-                        "&currency=USD" .
-                        "&paymentType=DB";
+        $url = "https://eu-test.oppwa.com/v1/checkouts";
+        $data = "entityId=8a8294174b7ecb28014b9699220015ca" .
+            "&amount=$amount" .
+            "&currency=USD" .
+            "&paymentType=DB";
 
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                           'Authorization:Bearer OGE4Mjk0MTc0YjdlY2IyODAxNGI5Njk5MjIwMDE1Y2N8c3k2S0pzVDg='));
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $responseData = curl_exec($ch);
-            if(curl_errno($ch)) {
-                return curl_error($ch);
-            }
-            curl_close($ch);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Authorization:Bearer OGE4Mjk0MTc0YjdlY2IyODAxNGI5Njk5MjIwMDE1Y2N8c3k2S0pzVDg='
+        ));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // this should be set to true in production
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $responseData = curl_exec($ch);
+        if (curl_errno($ch)) {
+            return curl_error($ch);
+        }
+        curl_close($ch);
 
-            $responseData = json_decode($responseData , true);
-            $checkoutId = $responseData['id'];
+        $responseData = json_decode($responseData, true);
+        $checkoutId = $responseData['id'];
 
 
-        return view('front.checkout' , compact('carts' , 'checkoutId'));
+        return view('front.checkout', compact('carts', 'checkoutId'));
     }
 
 
@@ -246,82 +247,78 @@ class MainController extends Controller
 
     public function thanks()
     {
-        $carts = Cart::where('user_id' , Auth::id())->whereNull('order_id')->get();
+        $carts = Cart::where('user_id', Auth::id())->whereNull('order_id')->get();
 
-            $amount = 0;
-            foreach ($carts as $cart ) :
+        $amount = 0;
+        foreach ($carts as $cart) :
             $amount += $cart->quantity * $cart->price;
-            endforeach;
+        endforeach;
 
 
 
-     //dd(request()->all());
-     $resourcePath = request()->resourcePath;
+        //dd(request()->all());
+        $resourcePath = request()->resourcePath;
 
-     $url = "https://eu-test.oppwa.com/$resourcePath";
-	 $url .= "?entityId=8a8294174b7ecb28014b9699220015ca";
+        $url = "https://eu-test.oppwa.com/$resourcePath";
+        $url .= "?entityId=8a8294174b7ecb28014b9699220015ca";
 
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                   'Authorization:Bearer OGE4Mjk0MTc0YjdlY2IyODAxNGI5Njk5MjIwMDE1Y2N8c3k2S0pzVDg='));
-	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$responseData = curl_exec($ch);
-	if(curl_errno($ch)) {
-		return curl_error($ch);
-	}
-	curl_close($ch);
-    $responseData = json_decode($responseData , true);
-	//dd($responseData['result']['code']);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Authorization:Bearer OGE4Mjk0MTc0YjdlY2IyODAxNGI5Njk5MjIwMDE1Y2N8c3k2S0pzVDg='
+        ));
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // this should be set to true in production
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $responseData = curl_exec($ch);
+        if (curl_errno($ch)) {
+            return curl_error($ch);
+        }
+        curl_close($ch);
+        $responseData = json_decode($responseData, true);
+        //dd($responseData['result']['code']);
 
-    if($responseData['result']['code'] == '000.100.110'){
-        $order = Order::create(['total' => $amount , 'user_id' => Auth::id()]);
+        if ($responseData['result']['code'] == '000.100.110') {
+            $order = Order::create(['total' => $amount, 'user_id' => Auth::id()]);
 
-         Payment::create([
-            'total' => $amount ,
-            'user_id' => Auth::id(),
-            'tranaction_id' => $responseData['id'],
-            'order_id' => $order->id,
-        ]);
+            Payment::create([
+                'total' => $amount,
+                'user_id' => Auth::id(),
+                'tranaction_id' => $responseData['id'],
+                'order_id' => $order->id,
+            ]);
 
-        Cart::where('user_id' , Auth::id())
-        ->whereNull('order_id')
-        ->update(['order_id' => $order->id
-    ]);
+            Cart::where('user_id', Auth::id())
+                ->whereNull('order_id')
+                ->update([
+                    'order_id' => $order->id
+                ]);
 
-    Cart::where('user_id', Auth::id())->whereNull('order_id')->update(['order_id' => $order->id]);
+            Cart::where('user_id', Auth::id())->whereNull('order_id')->update(['order_id' => $order->id]);
 
             // send invoice to the user
 
             // return PDF::loadFile(public_path().'/myfile.html')->save('/path-to/my_stored_file.pdf')->stream('download.pdf');
 
-            $inv_name = 'invoice_'.rand().rand().'.pdf';
+            $inv_name = 'invoice_' . rand() . rand() . '.pdf';
 
             $pdf = PDF::loadView('front.invoice', ['carts' => $carts, 'order' => $order])
-            ->save(public_path('invoices/') . $inv_name);
+                ->save(public_path('invoices/') . $inv_name);
 
 
             //Storage::put('public/invoices/'.$inv_name, $pdf->output());
 
             Mail::to(Auth::user())->send(new InvoiceMail($order, $inv_name));
+            $admin = User::find(1);
+            $admin->notify( new NewOrder($order->id) );
 
-        return redirect()->route('site.home')
-        ->with('msg' , 'Payment Done Successfully')
-        ->with('type' , 'success');
-
-    } else {
-        return redirect()->route('site.home')
-        ->with('msg' , 'Payment Faild')
-        ->with('type' , 'danger');
-
+            return redirect()->route('site.home')
+                ->with('msg', 'Payment Done Successfully')
+                ->with('type', 'success');
+        } else {
+            return redirect()->route('site.home')
+                ->with('msg', 'Payment Faild')
+                ->with('type', 'danger');
+        }
     }
-
-
-    }
-
-
-
-
 }

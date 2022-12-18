@@ -17,14 +17,14 @@
                 <th>{{ $category->name }}</th>
                 <th>{{ $category->parent->name }}</th>
                 <th>
-                    {{-- @if (Auth::user()->hasAbility('edit_category')) --}}
+                     @if (Auth::user()->hasAbility('edit_category'))
                     <a href="{{ route('admin.categories.edit', $category->id) }}"
                         class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
 
-                    {{-- @endif --}}
+                    @endif
 
-                    {{-- <a href="#" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a> --}}
-                    {{-- @if (Auth::user()->hasAbility('delete_category')) --}}
+                    <a href="#" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                    @if (Auth::user()->hasAbility('delete_category'))
 
                     <form action="{{ route('admin.categories.destroy', $category->id) }}"
                         method="POST" class="d-inline">
@@ -34,7 +34,7 @@
                             class="btn btn-danger btn-sm">
                             <i class="fas fa-trash"></i </button>
                     </form>
-                    {{-- @endif --}}
+                    @endif
 
                 </th>
         @endforeach
@@ -57,29 +57,3 @@
 
 
 
-
-{{--
-@foreach ($categories as $category)
-
-<div class="">
-    {{ $category->name }} ({{ $category->id }})
-
-    @foreach ($category->children as $child )
-        <div style="margin-left: 20px;" class="">
-            {{ $child->name }} ({{ $child->id }})
-
-            @foreach ($child->children as $subchild )
-            <div style="margin-left: 20px;">
-
-
-                {{ $subchild->name }} ({{ $subchild->id }})
-
-            </div>
-        @endforeach
-
-        </div>
-    @endforeach
-
-</div>
-
-@endforeach --}}

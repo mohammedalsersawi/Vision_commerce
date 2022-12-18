@@ -39,9 +39,7 @@
             e.preventDefault();
              const form = this;
                 $('.text-danger').text('');
-                // $('#image_error').text('');
-                // $('#content_error').text('');
-                // $('#category_id_error').text('');
+
              jQuery.ajax({
                 type: 'post',
                 url: '{{ route('admin.blogs.store') }}',
@@ -49,32 +47,18 @@
                     processData:false,
                     contentType:false,
                     success: function(res) {
-
                         $('.card-body').html(res);
                         $('#exampleModal').modal('hide');
                         $("#form")[0].reset();
-                        swal.fire(
-                            'Added',
-                            'Blog Added success',
-                            'success'
-                        )
-
-
                 },
                 error: function(reject) {
                     var response = $.parseJSON(reject.responseText);
                     $.each(response.errors, function (key, val) {
                         $("#" + key + "_error").text(val[0]);
                     });
-
-
-
                 }
-
             });
         });
-
-
         });
     </script>
 

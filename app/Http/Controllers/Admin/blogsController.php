@@ -60,22 +60,16 @@ class blogsController extends Controller
             'image' => 'required',
             'category_id' => 'required',
         ]);
-
         $path = 'uploads/blogimage/';
         $file = $request->file('image');
         $file_name = time().'_'.$file->getClientOriginalName();
-
-
         $upload = $file->move(public_path('uploads/blogimage'), $file_name);
-
-
         Blog::create([
         'name' => request()->name,
         'slug'  => Str::slug($request->name),
         'content'  => $request->content,
         'image'  =>   $file_name,
         'category_id'  => $request->category_id,
-
         ]);
 
         $blogs = Blog::latest()->paginate(5);
@@ -83,10 +77,6 @@ class blogsController extends Controller
         return view('admin.blogs.table' , compact('categories' , 'blogs'))
         ->with('msg', 'category updated successfully')
         ->render();
-
-
-
-
 
     }
 
