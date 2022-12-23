@@ -24,7 +24,8 @@
                     <form action="{{ route('admin.blogs.index') }}" method="get">
                         <div class="row">
                             <div class="col-10">
-                                <input type="text" placeholder="Search.." name="search" class="form-control" value="{{ request()->search }}">
+                                <input type="text" placeholder="Search.." name="search" class="form-control"
+                                    value="{{ request()->search }}">
                             </div>
                             <div class="col-2">
                                 <button class="btn btn-info btn-block">Search</button>
@@ -36,6 +37,7 @@
                         <tr class="bg-dark">
                             <th>ID</th>
                             <th>Name</th>
+                            <th>Image</th>
                             <th>Category</th>
                             <th>Actions</th>
                         </tr>
@@ -44,15 +46,17 @@
                                 <tr>
                                     <th>{{ $blog->id }}</th>
                                     <th>{{ $blog->name }}</th>
-                                    <th>{{ $blog->category->{'name_'.app()->currentLocale()} }}</th>
+                                    <th><img width="80" class="img-thumbnail mt-2" src="{{ asset('uploads/images/' . $blog->image) }}"
+                                        alt=""></th>
+                                    <th>{{ $blog->category->name}}</th>
                                     <th>
                                         <a href="{{ route('admin.blogs.edit', $blog->id) }}"
                                             class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
 
                                         {{-- <a href="{{ route('admin.blogs.destroy', $blog->id) }}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a> --}}
 
-                                        <form class="d-inline"
-                                            action="{{ route('admin.blogs.destroy', $blog->id) }}" method="POST">
+                                        <form class="d-inline" action="{{ route('admin.blogs.destroy', $blog->id) }}"
+                                            method="POST">
                                             @csrf
                                             @method('delete')
                                             <button onclick="return confirm('Are you sure?!')"
@@ -63,9 +67,9 @@
                                 </tr>
                             @endforeach
                         @else
-                        <tr>
-                            <td colspan="4" align="center">No Blogs Found</td>
-                        </tr>
+                            <tr>
+                                <td colspan="4" align="center">No Blogs Found</td>
+                            </tr>
                         @endif
 
                     </table>

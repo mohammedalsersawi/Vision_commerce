@@ -40,7 +40,7 @@
                         <div class="mb-3">
                             <label>Image</label>
                             <input name="image" type="file" class="form-control" />
-                            <img width="120" class="img-thumbnail mt-2" src="{{ asset('uploads/' . $blog->image) }}"
+                            <img width="120" class="img-thumbnail mt-2" src="{{ asset('uploads/images/' . $blog->image) }}"
                                 alt="">
                         </div>
 

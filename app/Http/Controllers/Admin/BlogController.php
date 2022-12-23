@@ -23,10 +23,10 @@ class BlogController extends Controller
         }else {
             $blogs = Blog::latest()->paginate(5);
         }
+        $categories = Category::all();
 
-        // dd($blogs);
 
-        return view('admin.blogs.index', compact('blogs'));
+        return view('admin.blogs.index', compact('blogs' ,'categories'));
     }
 
     /**
