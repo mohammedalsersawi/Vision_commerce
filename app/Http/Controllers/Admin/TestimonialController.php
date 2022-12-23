@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class TestimonialController extends Controller
 {
@@ -15,8 +15,7 @@ class TestimonialController extends Controller
      */
     public function index()
     {
-
-        $testimonials = Testimonial::latest('id')->paginate(6);
+        $testimonials = Testimonial::latest()->paginate(5);
 
         return view('admin.testimonials.index', compact('testimonials'));
     }
@@ -40,20 +39,19 @@ class TestimonialController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-        'content' => 'required',
-        'user' => 'required',
-        'position' => 'required',
+            'content' => 'required',
+            'user' => 'required',
+            'position' => 'required',
         ]);
+
         Testimonial::create([
-        'content' => $request->content,
-        'user' => $request->user,
-        'position' => $request->position,
-
+            'content' => $request->content,
+            'user' => $request->user,
+            'position' => $request->position,
         ]);
 
-        return redirect()->route('admin.testimonials.index')
-            ->with('msg', 'testimonial added successfully')
-            ->with('type', 'success');
+
+        return redirect()->route('admin.testimonials.index')->with('msg', 'Testimonial added successfully')->with('type', 'success');
     }
 
     /**
@@ -76,7 +74,7 @@ class TestimonialController extends Controller
     public function edit($id)
     {
         $testimonial = Testimonial::find($id);
-        return view('admin.testimonials.edit' , compact('testimonial'));
+        return view('admin.testimonials.edit', compact('testimonial'));
     }
 
     /**
@@ -88,22 +86,21 @@ class TestimonialController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         $request->validate([
             'content' => 'required',
             'user' => 'required',
             'position' => 'required',
-            ]);
+        ]);
 
-            Testimonial::find($id)->update([
+        Testimonial::find($id)->update([
             'content' => $request->content,
             'user' => $request->user,
             'position' => $request->position,
+        ]);
 
-            ]);
 
-            return redirect()->route('admin.testimonials.index')
-                ->with('msg', 'testimonial updated successfully')
-                ->with('type', 'success');
+        return redirect()->route('admin.testimonials.index')->with('msg', 'Testimonial updated successfully')->with('type', 'success');
     }
 
     /**
@@ -117,8 +114,6 @@ class TestimonialController extends Controller
 
         Testimonial::find($id)->delete();
 
-        return redirect()->route('admin.testimonials.index')
-            ->with('msg', 'testimonial deleted successfully')
-            ->with('type', 'danger');
+        return redirect()->route('admin.testimonials.index')->with('msg', 'Testimonial deleted successfully')->with('type', 'danger');
     }
 }

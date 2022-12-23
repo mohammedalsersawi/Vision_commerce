@@ -13,11 +13,11 @@ class CommentFactory extends Factory
      */
     public function definition()
     {
-        //
+
         return [
-            'comment'   =>$this->faker->sentence(),
-            'user_id'   =>$this->faker->numberBetween(1,3),
-            'blog_id'   =>$this->faker->numberBetween(1,20),
+            'comment' =>$this->faker->sentence(),
+            'user_id' => $this->faker->numberBetween(1, 3),
+            'blog_id' => $this->faker->numberBetween(1, 20),
         ];
     }
 }

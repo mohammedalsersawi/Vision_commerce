@@ -17,10 +17,8 @@ class IsAdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::user()->type == 'user'){
+        if (Auth::user()->type == 'user') return redirect('/user/'.Auth::id());
 
-            return redirect('/user/'.Auth::user()->id);
-        }
         return $next($request);
     }
 }

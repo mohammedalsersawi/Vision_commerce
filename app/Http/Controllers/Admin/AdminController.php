@@ -24,42 +24,37 @@ class AdminController extends Controller
         $t_count = Testimonial::count();
         return view('admin.dashboard', compact('o_count', 'u_count', 'c_count', 'p_count', 'b_count', 't_count'));
     }
+
     public function orders()
     {
         $orders = Order::latest()->paginate(10);
         return view('admin.orders', compact('orders'));
     }
+
+    public function users()
+    {
+        if(request()->has('search')) {
+            $users = User::where('type', 'user')->where('name', 'like', '%'. request()->search . '%')->orWhere('email', 'like', '%'. request()->search . '%')->latest()->paginate(10);
+        }else {
+            $users = User::where('type', 'user')->latest()->paginate(10);
+        }
+        return view('admin.users', compact('users'));
+    }
+
     public function orders_details($id)
     {
         $order = Order::find($id);
         return view('admin.orders_details', compact('order'));
     }
 
-
-    public function users()
-    {
-        if(request()->filled('search')) {
-             $users = User::where('type', 'user')
-             ->where(function($query){
-                $query->where('name',  'like', '%'. request()->search . '%')
-                ->orWhere('email', 'like', '%'. request()->search . '%');
-             })
-             ->latest()
-             ->paginate(10);
-        }else {
-            $users = User::where('type', 'user')->latest()->paginate(10);
-        }
-    //    return $users;
-        return view('admin.users', compact('users'));
-    }
-
-
-
     public function admins()
     {
-        $admins = User::where('type', 'admin')->latest()->paginate(10);
-        $roles = Role::all();
-        return view('admin.admins', compact('admins', 'roles'));
+        if(request()->has('search')) {
+            $admins = User::where('type', 'admin')->where('name', 'like', '%'. request()->search . '%')->orWhere('email', 'like', '%'. request()->search . '%')->latest()->paginate(10);
+        }else {
+            $admins = User::where('type', 'admin')->latest()->paginate(10);
+        }
+        return view('admin.admins', compact('admins'));
     }
 
     public function admins_edit(Request $request, $id)

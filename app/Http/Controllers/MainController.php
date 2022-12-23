@@ -9,31 +9,38 @@ use App\Models\Comment;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Category;
-//use Barryvdh\DomPDF\Facade as PDF;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Mail\InvoiceMail;
 use App\Mail\ContactUsMail;
 use App\Models\User;
 use App\Notifications\NewOrder;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class MainController extends Controller
 {
     public function index()
     {
         $best_discount = Product::whereNotNull('discount')->orderBy('discount', 'desc')->first();
-        //   dd($best_discount);
+
         $categories = Category::all();
 
         $latest_categories = Category::latest('id')->take(5)->get();
         // dd($latest_categories);
 
-        return view('front.index', compact('best_discount', 'categories', 'latest_categories'));
+        $currency = Http::get('https://freecurrencyapi.net/api/v2/latest',
+        [
+            'apikey' => 'e896ac70-9723-11ec-974e-4fcc657cc743'
+        ]);
+
+        $currency = json_decode( $currency->body(), true);
+
+        // dd($best_discount);
+        return view('front.index', compact('best_discount', 'categories', 'latest_categories', 'currency'));
     }
-
-
 
     public function shop()
     {
@@ -41,85 +48,69 @@ class MainController extends Controller
         return view('front.shop', compact('products'));
     }
 
-
     public function shop_details($slug)
     {
         $product = Product::where('slug', $slug)->first();
 
-        $related = Product::where('category_id', $product->category_id)
-            ->where('id', '<>', $product->id)->take(4)->get();
+        $related = Product::where('category_id', $product->category_id)->where('id', '<>', $product->id)->take(4)->get();
 
-
-        return view('front.shop-details', compact('product', 'related'));
+        return view('front.shop_details', compact('product', 'related'));
     }
-
-
-
-
 
     public function category_single($slug)
     {
         $category = Category::where('slug', $slug)->first();
         $products = $category->products()->paginate(6);
 
-        return view('front.shop', compact('products'));
+        return view('front.shop',compact('products'));
     }
-
-
-
 
     public function blog()
     {
-        //  $blogs = Blog::latest('id')->paginate(6);
         $blogs = Blog::orderBy('id', 'desc')->paginate(6);
+        // dd($blogs);
         return view('front.blog', compact('blogs'));
     }
 
     public function blog_single($slug)
     {
-        $blog  = Blog::where('slug', $slug)->first();
-        $related = Blog::where('category_id', $blog->category_id)
-            ->where('id', '<>', $blog->id)
-            //->limit(3)
-            ->take(3)
-            ->get();
+        $blog = Blog::where('slug', $slug)->first();
+
+        // dd($blog->category_id);
+
+        $related = Blog::where('category_id', $blog->category_id)->where('id', '<>', $blog->id)->take(3)->get();
+
+        // dd($related);
+
         return view('front.blog_single', compact('blog', 'related'));
     }
-
-
-
 
     public function add_comment()
     {
         Comment::create([
             'comment' => request()->comment,
             'blog_id' => request()->blog_id,
-            'user_id' => Auth::id(),
+            'user_id' => Auth::id()
         ]);
-        $comments = Blog::find(request()->blog_id)->comments()
-            ->orderBy('id', 'desc')->get();
 
-        return view('front.parts.comment_list', compact('comments'))
-            ->render();
+        $comments = Blog::find(request()->blog_id)->comments()->orderBy('id', 'desc')->get();
+
+        return view('front.parts.comment_list',compact('comments'))->render();
     }
-
-
-
-
 
     public function delete_comment($id)
     {
+
         $comment = Comment::findOrFail($id);
-        if ($comment->user_id == Auth::id()) {
+
+        if ($comment->user_id == Auth::id()){
             $comment->delete();
-        } else {
-            return '!!!!!!!';
+        }else {
+            return 'بلاش هبل !!';
         }
 
         return redirect()->back();
     }
-
-
 
     public function contact()
     {
@@ -129,36 +120,43 @@ class MainController extends Controller
     public function contactus(Request $request)
     {
         $request->validate([
-            'name'  =>  'required',
-            'email' =>  'required',
-            'message' => 'required'
+            'name' => 'required',
+            'email' => 'required',
+            'message' => 'required',
         ]);
-        Mail::to('admin@hamo.com')->send(new ContactUsMail($request->except('_token')));
+
+        Mail::to('admin@mohamed.com')->send(new ContactUsMail($request->except('_token')));
+
         return redirect()->back();
     }
 
     public function purchase_product(Request $request, $id)
     {
+        // dd($request->all());
 
         $product = Product::find($id);
 
-        $cart = Cart::where('user_id', Auth::id())
-            ->whereNull('order_id')
-            ->where('product_id', $id)->first();
+        $cart = Cart::where('user_id', Auth::id())->whereNull('order_id')->where('product_id', $id)->first();
 
-        if ($cart) {
+        // dd($cart);
+
+        if($cart) {
             $cart->update(['quantity' => $cart->quantity + $request->quantity]);
-        } else {
+        }else {
             Cart::create([
-                'price'  => $product->price,
+                'price' => $product->price,
                 'quantity' => $request->quantity,
-                'user_id'  => Auth::id(),
+                'user_id' => Auth::id(),
                 'product_id' => $id
             ]);
         }
-        return redirect()->route('site.cart');
-    }
 
+
+
+        return redirect()->route('site.checkout');
+
+        // dd($product);
+    }
 
 
     public function cart()
@@ -167,40 +165,29 @@ class MainController extends Controller
         return view('front.cart', compact('carts'));
     }
 
-
     public function delete_product($id)
     {
         Cart::destroy($id);
         return redirect()->back();
     }
 
-
-
     public function update_cart()
     {
+        $items  = request()->items;
 
-
-        $items = request()->items;
-        foreach ($items as $item) {
+        foreach($items as $item) {
             $new_qty = $item[0];
             $p_id = $item[1];
 
-            Cart::where('product_id', $p_id)
-                ->where('user_id', Auth::id())
-                ->update([
-                    'quantity' => $new_qty
-                ]);
+            Cart::where('product_id', $p_id)->where('user_id', Auth::id())->update([
+                'quantity' => $new_qty
+            ]);
         }
 
         $carts = Cart::where('user_id', Auth::id())->whereNull('order_id')->get();
 
         return view('front.parts.cart_items', compact('carts'))->render();
-
-        //->render();  تقوم بجلب كود html
-
-
     }
-
 
 
     public function checkout()
@@ -304,7 +291,6 @@ class MainController extends Controller
 
             $pdf = PDF::loadView('front.invoice', ['carts' => $carts, 'order' => $order])
                 ->save(public_path('invoices/') . $inv_name);
-
 
             //Storage::put('public/invoices/'.$inv_name, $pdf->output());
 

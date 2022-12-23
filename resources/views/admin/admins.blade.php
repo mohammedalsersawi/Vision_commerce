@@ -13,21 +13,28 @@
                     </div>
                 </div>
                 <div class="card-body">
-
+                    <form action="{{ route('admin.users') }}" method="get">
+                        <div class="row">
+                            <div class="col-10">
+                                <input type="text" placeholder="Search.." name="search" class="form-control" value="{{ request()->search }}">
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-info btn-block">Search</button>
+                            </div>
+                        </div>
+                    </form>
                     <table class="table table-bordered table-striped table-hover my-4">
                         <tr class="bg-dark">
                             <th>ID</th>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Role</th>
                         </tr>
                         @if ($admins->count() > 0)
                             @foreach ($admins as $admin)
                                 <tr>
                                     <th>{{ $admin->id }}</th>
-                                    <th><a class="user" href="{{ route('admin.admins_edit', $admin->id) }}" data-toggle="modal" data-target="#exampleModal">{{ $admin->name }}</a> </th>
+                                    <th>{{ $admin->name }}</th>
                                     <th>{{ $admin->email }}</th>
-                                    <th>{{ $admin->role->name }}</th>
                                 </tr>
                             @endforeach
                         @else
@@ -47,34 +54,7 @@
     </div>
 
 
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Change Role</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form action="" method="POST">
-            @csrf
-            @method('put')
-            <div class="modal-body">
-                <select name="role_id" class="form-control">
-                    @foreach ($roles as $role)
-                        <option value="{{ $role->id }}">{{ $role->name }}</option>
-                    @endforeach
-                </select>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save changes</button>
-              </div>
-        </form>
-      </div>
-    </div>
-  </div>
+
 
 @stop
 

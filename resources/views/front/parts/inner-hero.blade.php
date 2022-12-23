@@ -1,7 +1,6 @@
 <?php
 use App\Models\Category;
 ?>
-
 <!-- Hero Section Begin -->
 <section class="hero hero-normal">
     <div class="container">
@@ -13,16 +12,8 @@ use App\Models\Category;
                         <span>All departments</span>
                     </div>
                     <ul>
-                        @foreach (Category::take(10)->latest()->get() as $item )
-
-                        <li>
-                            <a href="{{ route('site.category_single',$item->slug) }}">
-                                {{ $item->name }} ({{ $item->products->count() }})
-                                {{--                             {{ $item->{'name_'.app()->currentLocale()} }} ({{ $item->products->count() }})
- --}}
-
-                        </a>
-                        </li>
+                        @foreach (Category::take(10)->latest('id')->get() as $item)
+                        <li><a href="{{ route('site.category_single', $item->slug) }}">{{ $item->name }} ({{ $item->products->count() }})</a></li>
                         @endforeach
                     </ul>
                 </div>
@@ -40,14 +31,15 @@ use App\Models\Category;
                         </form>
                     </div>
                     <div class="hero__search__phone w-25">
-                        <a href="tel:+970597260259">
-                        {{-- <a href="https://wa.me/+970597260259"> --}}
+                        {{-- <a href="https://wa.me/0592418889"> --}}
+                        <a href="tel:0592418889">
                         <div class="hero__search__phone__icon">
                             <i class="fa fa-phone"></i>
                         </div>
-                    </a>
+                        </a>
                         <div class="hero__search__phone__text">
-                            <h5>+97 0597 260 259</h5>
+                            <h5>+65 11.188.888
+                            </h5>
                             <span>support 24/7 time</span>
                         </div>
                     </div>

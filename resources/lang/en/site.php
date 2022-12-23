@@ -1,9 +1,8 @@
 <?php
+
 return [
-    'home' => 'HOMEPAGE',
-    'Shop' => 'OUR SHOP' ,
-    'Blog' => 'Blog',
-    'Contact' => 'Contact',
-
-
+    'home' => 'Homepage',
+    'shop' => 'Our Shop',
+    'blog' => 'Blog',
+    'contact' => 'Contact Us'
 ];

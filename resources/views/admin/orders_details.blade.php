@@ -28,8 +28,8 @@
                             <tr>
                                 <th>{{ $cart->id }}</th>
                                 <th>{{ $cart->product->name }}</th>
-                                <th><img src="{{ $cart->product->image }}" width="80" alt=""></th>
                                 <th>{{ $cart->product->price }}</th>
+                                <th><img src="{{ asset('uploads/images/'.$cart->product->image) }}" width="80" alt=""></th>
                                 <th>{{ $cart->quantity }}</th>
 
                             </tr>

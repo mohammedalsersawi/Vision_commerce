@@ -38,8 +38,7 @@
                                     <th>{{ $user->id }}</th>
                                     <th>{{ $user->name }}</th>
                                     <th>{{ $user->email }}</th>
-
-                               {{--      <th>{{ $user->orders->count() }}</th> --}}
+                                    <th>{{ $user->orders->count() }}</th>
 
                                 </tr>
                             @endforeach

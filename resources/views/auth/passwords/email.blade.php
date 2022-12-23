@@ -7,9 +7,10 @@
             <form method="POST" action="{{ route('password.email') }}">
                 @csrf
 
-                <div class="mb-3">
-                    <label for="">{{ __('Email Address') }}</label>
-                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                <div class=" mb-3">
+
+                    <label>{{ __('E-Mail Address') }}</label>
+                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
 
                         @error('email')
                             <span class="invalid-feedback" role="alert">
@@ -19,10 +20,9 @@
                 </div>
 
                 <div class="mb-0">
-                        <button type="submit" class="site-btn w-100">
-                            {{ __('Send Password Reset Link') }}
-                        </button>
-
+                    <button type="submit" class="site-btn w-100">
+                        {{ __('Send Password Reset Link') }}
+                    </button>
                 </div>
             </form>
         </div>

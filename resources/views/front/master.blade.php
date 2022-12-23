@@ -21,38 +21,39 @@
     <link rel="stylesheet" href="{{ asset('assets/css/owl.carousel.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('assets/css/slicknav.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" type="text/css">
+
+    {{-- @dump( app()->currentLocale() ) --}}
+
     @if (app()->currentLocale() == 'ar')
-        <style>
-            body {
-                direction: rtl;
-                text-align: right;
-            }
-
-            .hero__search__phone {
-                float: left;
-            }
-
-            .hero__search__form {
-                float: right;
-            }
-
-            .header__menu ul li a {
-                letter-spacing: 0
-            }
-        </style>
+    <style>
+        body {
+            direction: rtl;
+            text-align: right
+        }
+        .hero__search__phone {
+            float: left;
+        }
+        .hero__search__form {
+            float: right;
+        }
+        .header__menu ul li a {
+            letter-spacing: 0
+        }
+    </style>
     @endif
-    @yield('styles')
 
+
+    @yield('styles')
 </head>
 
 <body>
 
     @if (session('msg'))
-    <div class="alert alert-{{ session('type') }}">
-    {{ session('msg') }}
-    </div>
-
+        <div class="alert alert-{{ session('type') }}">
+            {{ session('msg') }}
+        </div>
     @endif
+
     <!-- Page Preloder -->
     <div id="preloder">
         <div class="loader"></div>
@@ -76,30 +77,28 @@
                 <img src="{{ asset('assets/img/language.png') }}" alt="">
                 <div>English</div>
                 <span class="arrow_carrot-down"></span>
-                <ul>
+                {{-- <ul>
                     <li><a href="#">Spanis</a></li>
                     <li><a href="#">English</a></li>
-                </ul>
-
+                </ul> --}}
 
             </div>
             <div class="header__top__right__auth">
-                <a href="#"><i class="fa fa-user"></i> Login</a>
+                <a href="#"><i class="fa fa-user"></i> Loginff</a>
             </div>
         </div>
-
         <nav class="humberger__menu__nav mobile-menu">
             <ul>
                 <li class="active"><a href="./index.html">Home</a></li>
                 <li><a href="./shop-grid.html">Shop</a></li>
-                <li><a href="#">Pages</a>
+                {{-- <li><a href="#">Pages</a>
                     <ul class="header__menu__dropdown">
                         <li><a href="./shop-details.html">Shop Details</a></li>
                         <li><a href="./shoping-cart.html">Shoping Cart</a></li>
                         <li><a href="./checkout.html">Check Out</a></li>
                         <li><a href="./blog-details.html">Blog Details</a></li>
                     </ul>
-                </li>
+                </li> --}}
                 <li><a href="./blog.html">Blog</a></li>
                 <li><a href="./contact.html">Contact</a></li>
             </ul>
@@ -142,42 +141,32 @@
                                 <a href="#"><i class="fa fa-pinterest-p"></i></a>
                             </div>
                             <div class="header__top__right__language">
-                                @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
+                                @foreach(LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
                                     @if ($localeCode == app()->currentLocale())
                                         <img width="20" src="{{ asset('assets/img/'.$localeCode.'.png') }}" alt="">
                                         <div>{{ $properties['native'] }}</div>
                                     @endif
+
                                 @endforeach
-
                                 <span class="arrow_carrot-down"></span>
-
                                 <ul>
-                                    @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
+                                    @foreach(LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
                                         <li>
-                                            <a rel="alternate" hreflang="{{ $localeCode }}"
-                                                href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}">
+                                            <a rel="alternate" hreflang="{{ $localeCode }}" href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}">
                                                 {{ $properties['native'] }}
                                             </a>
                                         </li>
                                     @endforeach
                                 </ul>
                             </div>
-                            <div class="d-inline-flex header__top__right__auth">
+                            <div  class="d-inline-flex header__top__right__auth">
                                 @if (Auth::check())
-                                    <a href="{{ route('logout') }}"
-                                        onclick="event.preventDefault();
-                                document.getElementById('log-form').submit()">
-                                        <i class="fa fa-user"></i> Logout</a>
+                                <a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('log-form').submit()"><i class="fa fa-user"></i> Logout</a>
 
-                                    <form action="{{ route('logout') }}" method="POST" class="d-none"
-                                        id="log-form">
-                                        @csrf
-                                    </form>
+                                <form id="log-form" class="d-none" action="{{ route('logout') }}" method="POST">@csrf</form>
                                 @else
-                                    <a href="{{ route('login') }}">
-                                        <i class="fa fa-user"></i> Login</a>
-                                    <a class="mx-3" href="{{ route('register') }}">
-                                        <i class="fa fa-user"></i> Register</a>
+                                <a href="{{ route('login') }}"><i class="fa fa-user"></i> Login</a>
+                                <a class="mx-3" href="{{ route('register') }}"><i class="fa fa-user"></i> Register</a>
                                 @endif
 
                             </div>
@@ -190,26 +179,24 @@
             <div class="row">
                 <div class="col-lg-3">
                     <div class="header__logo">
-                        <a href="{{ route('site.home') }}">
-                            <img src="{{ asset('assets/img/logo.png') }}" alt=""></a>
+                        <a href="{{ route('site.home') }}"><img src="{{ asset('assets/img/logo.png') }}" alt=""></a>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <nav class="header__menu">
                         <ul>
-                            <li class="{{ request()->routeIs('site.home') ? 'active' : '' }}">
-                                <a href="{{ route('site.home') }}">{{ __('site.home') }}</a>
-                            </li>
-                            <li class="{{ request()->routeIs('site.shop') ? 'active' : '' }}">
-                                <a href="{{ route('site.shop') }}">{{ __('site.Shop') }}</a>
-                            </li>
-
-                            <li class="{{ request()->routeIs('site.blog') ? 'active' : '' }}">
-                                <a href="{{ route('site.blog') }}">{{ __('site.Blog') }}</a>
-                            </li>
-                            <li class="{{ request()->routeIs('site.contact') ? 'active' : '' }}">
-                                <a href="{{ route('site.contact') }}">{{ __('site.Contact') }}</a>
-                            </li>
+                            <li {{ request()->routeIs('site.home') ? 'class=active' : '' }}><a href="{{ route('site.home') }}">{{ __('site.home') }}</a></li>
+                            <li {{ request()->routeIs('site.shop') ? 'class=active' : '' }}><a href="{{ route('site.shop') }}">{{ __('site.shop') }}</a></li>
+                            {{-- <li><a href="#">Pages</a>
+                                <ul class="header__menu__dropdown">
+                                    <li><a href="./shop-details.html">Shop Details</a></li>
+                                    <li><a href="./shoping-cart.html">Shoping Cart</a></li>
+                                    <li><a href="./checkout.html">Check Out</a></li>
+                                    <li><a href="./blog-details.html">Blog Details</a></li>
+                                </ul>
+                            </li> --}}
+                            <li {{ request()->routeIs('site.blog') ? 'class=active' : '' }}><a href="{{ route('site.blog') }}">{{ __('site.blog') }}</a></li>
+                            <li {{ request()->routeIs('site.contact') ? 'class=active' : '' }}><a href="{{ route('site.contact') }}">{{ __('site.contact') }}</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -218,22 +205,19 @@
                         @php
                             $cart_count = 0;
                             $total = 0;
-                            if (Auth::check()) {
-                                $carts = App\Models\cart::where('user_id', Auth::id())
-                                    ->whereNull('order_id')
-                                    ->get();
+                            if(Auth::check()) {
+                                $carts = App\Models\Cart::where('user_id', Auth::id())->whereNull('order_id')->get();
                                 $cart_count = $carts->count();
 
                                 foreach ($carts as $item) {
                                     $total += $item->quantity * $item->price;
                                 }
-                            }
 
+                            }
                         @endphp
                         <ul>
                             <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
-                            <li><a href="{{ route('site.cart') }}"><i class="fa fa-shopping-bag"></i>
-                                    <span>{{ $cart_count }}</span></a></li>
+                            <li><a href="{{ route('site.cart') }}"><i class="fa fa-shopping-bag"></i> <span>{{ $cart_count }}</span></a></li>
                         </ul>
                         <div class="header__cart__price">item: <span>${{ $total }}</span></div>
                     </div>
@@ -246,11 +230,7 @@
     </header>
     <!-- Header Section End -->
 
-    <!-- Hero Section Begin -->
     @yield('content')
-    <!-- Hero Section End -->
-
-
 
     <!-- Footer Section Begin -->
     <footer class="footer spad">
@@ -259,8 +239,7 @@
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="footer__about">
                         <div class="footer__about__logo">
-                            <a href="./index.html"><img src="{{ asset('assets/img/logo.png') }}"
-                                    alt=""></a>
+                            <a href="./index.html"><img src="{{ asset('assets/img/logo.png') }}" alt=""></a>
                         </div>
                         <ul>
                             <li>Address: 60-49 Road 11378 New York</li>
@@ -310,20 +289,10 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="footer__copyright">
-                        <div class="footer__copyright__text">
-                            <p>
-                                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                                Copyright &copy;
-                                <script>
-                                    document.write(new Date().getFullYear());
-                                </script> All rights reserved | This template is made with <i
-                                    class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com"
-                                    target="_blank">Colorlib</a>
-                                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                            </p>
-                        </div>
-                        <div class="footer__copyright__payment"><img
-                                src="{{ asset('assets/img/payment-item.png') }}" alt=""></div>
+                        <div class="footer__copyright__text"><p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p></div>
+                        <div class="footer__copyright__payment"><img src="{{ asset('assets/img/payment-item.png') }}" alt=""></div>
                     </div>
                 </div>
             </div>
@@ -340,18 +309,8 @@
     <script src="{{ asset('assets/js/mixitup.min.js') }}"></script>
     <script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
-    @yield('script')
 
-    <script>
-        $(".alert").fadeTo(2000, 500).slideUp(500, function() {
-            $(".alert").slideUp(500);
-        });
-    </script>
-
-
-
-
-
+    @yield('scripts')
 
 </body>
 

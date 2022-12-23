@@ -17,14 +17,13 @@
                 <th>{{ $category->name }}</th>
                 <th>{{ $category->parent->name }}</th>
                 <th>
-                     @if (Auth::user()->hasAbility('edit_category'))
+                     {{-- @if (Auth::user()->hasAbility('edit_category')) --}}
                     <a href="{{ route('admin.categories.edit', $category->id) }}"
                         class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
 
-                    @endif
+                    {{-- @endif --}}
 
-                    <a href="#" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
-                    @if (Auth::user()->hasAbility('delete_category'))
+                    {{-- @if (Auth::user()->hasAbility('delete_category')) --}}
 
                     <form action="{{ route('admin.categories.destroy', $category->id) }}"
                         method="POST" class="d-inline">
@@ -34,7 +33,7 @@
                             class="btn btn-danger btn-sm">
                             <i class="fas fa-trash"></i </button>
                     </form>
-                    @endif
+                    {{-- @endif --}}
 
                 </th>
         @endforeach

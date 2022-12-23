@@ -10,61 +10,82 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h3 class="m-0">All Blogs</h3>
-                        <a href={{ route('admin.blogs.create') }} class="btn btn-dark px-4" data-toggle="modal"
-                            data-target="#exampleModal">Add New Blog</a>
-
-                      @include('admin.blogs.model')
-
+                        <a href="{{ route('admin.blogs.create') }}" class="btn btn-dark px-4">Add New Blog</a>
                     </div>
                 </div>
-
                 <div class="card-body">
-                    <div class="alert alert-danger" style="display:none"></div>
 
-                 @include('admin.blogs.table')
+                    @if (session('msg'))
+                        <div class="alert alert-{{ session('type') }}">
+                            {{ session('msg') }}
+                        </div>
+                    @endif
 
+                    <form action="{{ route('admin.blogs.index') }}" method="get">
+                        <div class="row">
+                            <div class="col-10">
+                                <input type="text" placeholder="Search.." name="search" class="form-control" value="{{ request()->search }}">
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-info btn-block">Search</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <table class="table table-bordered table-striped table-hover my-4">
+                        <tr class="bg-dark">
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                        @if ($blogs->count() > 0)
+                            @foreach ($blogs as $blog)
+                                <tr>
+                                    <th>{{ $blog->id }}</th>
+                                    <th>{{ $blog->name }}</th>
+                                    <th>{{ $blog->category->{'name_'.app()->currentLocale()} }}</th>
+                                    <th>
+                                        <a href="{{ route('admin.blogs.edit', $blog->id) }}"
+                                            class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+
+                                        {{-- <a href="{{ route('admin.blogs.destroy', $blog->id) }}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a> --}}
+
+                                        <form class="d-inline"
+                                            action="{{ route('admin.blogs.destroy', $blog->id) }}" method="POST">
+                                            @csrf
+                                            @method('delete')
+                                            <button onclick="return confirm('Are you sure?!')"
+                                                class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                        </form>
+
+                                    </th>
+                                </tr>
+                            @endforeach
+                        @else
+                        <tr>
+                            <td colspan="4" align="center">No Blogs Found</td>
+                        </tr>
+                        @endif
+
+                    </table>
+
+                    <div class="d-flex justify-content-center">
+                        {{ $blogs->links() }}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
 @stop
 
+
 @section('scripts')
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        jQuery(document).ready(function(){
-            jQuery(document).on('submit' , '#form' , function(e){
-            e.preventDefault();
-             const form = this;
-                $('.text-danger').text('');
-
-             jQuery.ajax({
-                type: 'post',
-                url: '{{ route('admin.blogs.store') }}',
-                data:new FormData(form),
-                    processData:false,
-                    contentType:false,
-                    success: function(res) {
-                        $('.card-body').html(res);
-                        $('#exampleModal').modal('hide');
-                        $("#form")[0].reset();
-                },
-                error: function(reject) {
-                    var response = $.parseJSON(reject.responseText);
-                    $.each(response.errors, function (key, val) {
-                        $("#" + key + "_error").text(val[0]);
-                    });
-                }
-            });
-        });
+        $(".alert").fadeTo(2000, 500).slideUp(500, function() {
+            $(".alert").slideUp(500);
         });
     </script>
 
-
-
-
-
-
-@endsection
+@stop

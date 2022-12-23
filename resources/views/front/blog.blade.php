@@ -1,8 +1,9 @@
-
-
 @extends('front.master')
-@section('title' , 'Blog | ' . env('APP_NAME'))
+
+@section('title', 'Blog | ' . env('APP_NAME'))
+
 @section('content')
+
 @include('front.parts.inner-hero')
 
     <!-- Breadcrumb Section Begin -->
@@ -92,16 +93,20 @@
                 </div>
                 <div class="col-lg-8 col-md-7">
                     <div class="row">
-
-                        @foreach ($blogs as $item )
+                        @foreach ($blogs as $item)
                         <div class="col-lg-6 col-md-6 col-sm-6">
-                           @include('front.parts.blog_item')
+                            @include('front.parts.blog_item')
                         </div>
                         @endforeach
-                     {{ $blogs->links() }}
+
 
                         <div class="col-lg-12">
-
+                            <div class="product__pagination blog__pagination">
+                                <a href="#">1</a>
+                                <a href="#">2</a>
+                                <a href="#">3</a>
+                                <a href="#"><i class="fa fa-long-arrow-right"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -109,5 +114,4 @@
         </div>
     </section>
     <!-- Blog Section End -->
-
 @stop

@@ -16,10 +16,8 @@ class RoleController extends Controller
      */
     public function index()
     {
-
-        $roles = Role::latest('id')->paginate(10);
+        $roles = Role::paginate(10);
         return view('admin.roles.index', compact('roles'));
-
     }
 
     /**
@@ -51,9 +49,7 @@ class RoleController extends Controller
 
         $role->abilities()->attach( $request->abilities );
 
-        return redirect()->route('admin.roles.index')
-            ->with('msg', 'role added successfully')
-            ->with('type', 'success');
+        return redirect()->route('admin.roles.index')->with('msg', 'Role added successfully')->with('type', 'success');
     }
 
     /**
@@ -64,7 +60,6 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-        //
     }
 
     /**
@@ -75,10 +70,9 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        $role = Role::findorFail($id);
+        $role = Role::findOrFail($id);
         $roles = Role::all();
-
-        return view('admin.Categories.edit', compact('role', 'roles'));
+        return view('admin.roles.edit', compact('role', 'roles'));
     }
 
     /**
@@ -94,13 +88,13 @@ class RoleController extends Controller
             'name' => 'required|min:3|max:30',
         ]);
 
-        $role = Role::findorFail($id);
+        $role = Role::findOrFail($id);
+
         $role->update([
             'name' => $request->name,
         ]);
-        return redirect()->route('admin.roles.index')
-            ->with('msg', 'role updated successfully')
-            ->with('type', 'info');
+
+        return redirect()->route('admin.roles.index')->with('msg', 'Role updated successfully')->with('type', 'info');
     }
 
     /**
@@ -112,8 +106,6 @@ class RoleController extends Controller
     public function destroy($id)
     {
         Role::destroy($id);
-        return redirect()->route('admin.roles.index')
-            ->with('msg', 'role deleted successfully')
-            ->with('type', 'danger');
+        return redirect()->route('admin.roles.index')->with('msg', 'Role deleted successfully')->with('type', 'danger');
     }
 }

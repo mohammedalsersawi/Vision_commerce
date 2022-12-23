@@ -1,17 +1,20 @@
 @extends('front.master')
-@section('title', $blog->name . ' | ' . env('APP_NAME'))
+
+@section('title', $blog->title . ' | ' . env('APP_NAME'))
+
 @section('content')
+
     @include('front.parts.inner-hero')
 
     <!-- Blog Details Hero Begin -->
-    <section class="blog-details-hero set-bg" data-setbg="{{ asset('uploads/blogimage/'.$blog->image) }}">
+    <section class="blog-details-hero set-bg" data-setbg="{{ asset('uploads/images/'.$blog->image) }}">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="blog__details__hero__text">
-                        <h2>{{ $blog->name }}</h2>
+                        <h2>{{ $blog->id }} - {{ $blog->title }}</h2>
                         <ul>
-                            <li>{{ $blog->created_at->format('F d , Y') }}</li>
+                            <li>{{ $blog->created_at->format('F d, Y') }}</li>
                             <li>{{ $blog->comments->count() }} Comments</li>
                         </ul>
                     </div>
@@ -48,7 +51,7 @@
                             <div class="blog__sidebar__recent">
                                 <a href="#" class="blog__sidebar__recent__item">
                                     <div class="blog__sidebar__recent__item__pic">
-                                        <img src="{{ asset('assets/img/blog/sidebar/sr-1.jpg') }}" alt="">
+                                        <img src="img/blog/sidebar/sr-1.jpg" alt="">
                                     </div>
                                     <div class="blog__sidebar__recent__item__text">
                                         <h6>09 Kinds Of Vegetables<br /> Protect The Liver</h6>
@@ -57,7 +60,7 @@
                                 </a>
                                 <a href="#" class="blog__sidebar__recent__item">
                                     <div class="blog__sidebar__recent__item__pic">
-                                        <img src="{{ asset('assets/img/blog/sidebar/sr-2.jpg') }}" alt="">
+                                        <img src="img/blog/sidebar/sr-2.jpg" alt="">
                                     </div>
                                     <div class="blog__sidebar__recent__item__text">
                                         <h6>Tips You To Balance<br /> Nutrition Meal Day</h6>
@@ -66,7 +69,7 @@
                                 </a>
                                 <a href="#" class="blog__sidebar__recent__item">
                                     <div class="blog__sidebar__recent__item__pic">
-                                        <img src="{{ asset('assets/img/blog/sidebar/sr-3.jpg') }}" alt="">
+                                        <img src="img/blog/sidebar/sr-3.jpg" alt="">
                                     </div>
                                     <div class="blog__sidebar__recent__item__text">
                                         <h6>4 Principles Help You Lose <br />Weight With Vegetables</h6>
@@ -95,21 +98,22 @@
 
                     <div class="comments">
                         <div class="comment-list">
-                         @include('front.parts.comment_list' ,['comments' => $blog->comments])
+                            @include('front.parts.comment_list', ['comments' => $blog->comments()->orderBy('id', 'desc')->get()])
                         </div>
 
-                        @if (Auth::user())
-                            <form action="" class="mt-5" id="comment_form">
+                        @if (Auth::check())
+                            <form id="comment_form" action="" class="mt-5">
                                 <h2>Add New Comment</h2>
-                                <textarea name="" rows="4" class="form-control"></textarea>
+                                <textarea class="form-control" rows="4"></textarea>
                                 <div class="text-right">
                                     <button class="btn btn-success mt-3">Post Comment</button>
                                 </div>
-
                             </form>
                         @else
-                            <p>To Add Comment please <a href="{{ route('login') }}">Login</a></p>
+                            <p>To add comment please <a href="{{ route('login') }}">login</a> first</p>
                         @endif
+
+
                     </div>
 
                 </div>
@@ -135,38 +139,40 @@
                     </div>
                 @endforeach
 
+
             </div>
         </div>
     </section>
     <!-- Related Blog Section End -->
 @stop
-@section('script')
 
-    <script>
-        $('#comment_form').submit(function(e) {
-            e.preventDefault();
 
-            var c = $('#comment_form textarea').val();
-            var b_id = '{{ $blog->id }}';
+@section('scripts')
 
-            $.ajax({
-                type: 'post',
-                url: '{{ route('site.add_comment') }}',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    comment: c,
-                    blog_id: b_id
+<script>
 
-                },
-                success: function(res){
-                    //افراغ الفورم بعد كتابة التعلييق
-                $('#comment_form textarea').val('');
-                // اظهار البيانات
+    $('#comment_form').submit(function(e) {
+        e.preventDefault();
+
+        var c = $('#comment_form textarea').val();
+        var b_id = '{{ $blog->id }}';
+
+        $.ajax({
+            type: 'post',
+            url: '{{ route("site.add_comment") }}',
+            data: {
+                _token: '{{ csrf_token() }}',
+                comment: c,
+                blog_id: b_id
+            },
+            success: function(res) {
+                $('#comment_form textarea').val('')
                 $('.comment-list').html(res);
-                }
-
-            })
-
+            }
         })
-    </script>
+
+    })
+
+</script>
+
 @stop

@@ -19,7 +19,7 @@ class CreatePaymentsTable extends Migration
             $table->string('tranaction_id');
             $table->foreignId('user_id');
             $table->foreignId('order_id');
-            $table->foreignId('payment_by');
+            $table->foreignId('payment_by')->nullable();
             $table->timestamps();
         });
     }

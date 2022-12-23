@@ -19,7 +19,7 @@ class Blog extends Model
     public function category()
     {
         return $this->belongsTo(Category::class)->withDefault([
-            'name' => 'Uncategorized',
+            'name_en' => 'Uncategorized',
             'name_ar' => 'غير مصنف'
         ]);
     }

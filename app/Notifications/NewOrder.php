@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notification;
 class NewOrder extends Notification
 {
     use Queueable;
+
     public $order_id;
 
     /**
@@ -57,7 +58,7 @@ class NewOrder extends Notification
     {
         return [
             'data' => 'New Order',
-            'url' => route('admin.orders.details' , $this->order_id),
+            'url' => route('admin.orders.details', $this->order_id)
         ];
     }
 }

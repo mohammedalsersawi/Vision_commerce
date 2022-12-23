@@ -10,6 +10,7 @@ use Illuminate\Queue\SerializesModels;
 class InvoiceMail extends Mailable
 {
     use Queueable, SerializesModels;
+
     public $data;
     public $inv_name;
     /**
@@ -17,7 +18,7 @@ class InvoiceMail extends Mailable
      *
      * @return void
      */
-    public function __construct($data ,$inv_name)
+    public function __construct($data, $inv_name)
     {
         $this->data = $data;
         $this->inv_name = $inv_name;
@@ -30,7 +31,6 @@ class InvoiceMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.invoice_messag')
-        ->attach(public_path('invoices/'.$this->inv_name));
+        return $this->view('emails.invoice_message')->attach(public_path('invoices/'.$this->inv_name));
     }
 }

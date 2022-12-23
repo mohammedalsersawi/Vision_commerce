@@ -174,7 +174,6 @@
 <script src="{{ asset('adminassets/dist/js/adminlte.min.js') }}"></script>
 
 @yield('scripts')
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     $(".alert").fadeTo(2000, 500).slideUp(500, function() {

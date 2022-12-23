@@ -1,9 +1,8 @@
-
 <?php
 use App\Models\Category;
 ?>
 
-
+<!-- Hero Section Begin -->
 <section class="hero">
     <div class="container">
         <div class="row">
@@ -14,12 +13,10 @@ use App\Models\Category;
                         <span>All departments</span>
                     </div>
                     <ul>
-                    @foreach (Category::take(10)->latest()->get() as $item )
-                    <li><a href="{{ route('site.category_single',$item->slug) }}">
-                        {{-- {{ $item->{'name_'.app()->currentLocale()} }} ({{ $item->products->count() }}) --}}
-                        {{ $item->name }} ({{ $item->products->count() }})
-                    </a></li>
-                    @endforeach
+                        @foreach (Category::take(10)->latest('id')->get() as $item)
+                        <li><a href="{{ route('site.category_single', $item->slug) }}">{{ $item->name }} ({{ $item->products->count() }})</a></li>
+                        @endforeach
+
                     </ul>
                 </div>
             </div>
@@ -35,28 +32,30 @@ use App\Models\Category;
                             <button type="submit" class="site-btn">SEARCH</button>
                         </form>
                     </div>
-                    <div class="hero__search__phone w-25">
-                        <a href="https://wa.me/+970597260259">
+                    <div class="hero__search__phone">
                         <div class="hero__search__phone__icon">
                             <i class="fa fa-phone"></i>
                         </div>
-                    </a>
                         <div class="hero__search__phone__text">
-                            <h5>+97 0597 260 259</h5>
+                            <h5><a href="https://wa.me/0592418889">+65 11.188.888</a>
+                                </h5>
                             <span>support 24/7 time</span>
                         </div>
                     </div>
                 </div>
-               @if ($best_discount)
-               <div class="hero__item set-bg" data-setbg="{{ asset('uploads/images/'.$best_discount->image) }}">
-                <div class="hero__text">
-                    <span>{{ $best_discount->category->name }}</span>
-                    <h2>{{ $best_discount->name }} <br />{{ $best_discount->discount }}%</h2>
-                    <a href="{{ route('site.shop_details' , $best_discount->slug) }}" class="primary-btn">SHOP NOW</a>
+                @if ($best_discount)
+                <div class="hero__item set-bg" data-setbg="{{ asset($best_discount->image) }}">
+                    <div class="hero__text">
+                        <h2 class="display-4">{{ $best_discount->discount }}%</h2>
+                        <span>{{ $best_discount->category->name }}</span>
+                        <h2>{{ $best_discount->name }}</h2>
+                        <a href="{{ route('site.shop_details', $best_discount->slug) }}" class="primary-btn">SHOP NOW</a>
+                    </div>
                 </div>
-            </div>
-               @endif
+                @endif
+
             </div>
         </div>
     </div>
 </section>
+<!-- Hero Section End -->

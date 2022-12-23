@@ -14,14 +14,14 @@ class BlogFactory extends Factory
      */
     public function definition()
     {
-        $title = $this->faker->word(3,true);
-        return [
-            'name' => $title,
-            'slug' => Str::slug($title),
-            'content' => $this->faker->paragraph(3,true),
-            'image' => $this->faker->imageUrl(),
-            'category_id' => $this->faker->numberBetween(1,20),
 
+        $title = $this->faker->words(3, true);
+        return [
+            'title' => $title,
+            'slug' => Str::slug($title),
+            'content' => $this->faker->paragraphs(3, true),
+            'image' => $this->faker->imageUrl(),
+            'category_id' => $this->faker->numberBetween(1, 20)
         ];
     }
 }

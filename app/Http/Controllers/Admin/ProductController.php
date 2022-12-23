@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Feature;
 use Illuminate\Support\Facades\File;
 
-class ProductsController extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,14 +20,14 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        if (request()->has('search')) {
+        if(request()->has('search')) {
             $products = Product::where('name', 'like', '%' . request()->search . '%')->latest()->paginate(5);
-        } else {
+        }else {
             $products = Product::latest()->paginate(5);
         }
+
         return view('admin.products.index', compact('products'));
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -37,8 +37,9 @@ class ProductsController extends Controller
     public function create()
     {
         $categories = Category::all();
-        $discount = Discount::all();
-        return view('admin.products.create', compact('categories', 'discount'));
+        $discounts = Discount::all();
+
+        return view('admin.products.create', compact('categories', 'discounts'));
     }
 
     /**
@@ -51,30 +52,32 @@ class ProductsController extends Controller
     {
         $request->validate([
             'name' => 'required|min:3|max:30',
+            'image' => 'required|image|mimes:png,jpg',
             'content' => 'required|max:500',
             'price' => 'required',
             'quantity' => 'required',
             'category_id' => 'required|exists:categories,id',
         ]);
 
+
+
         // upload image
-        $imagename = 'product_' . time() . '_' . $request->file('image')->getClientOriginalName();
+        $imagename = 'product_'.time().'_'.$request->file('image')->getClientOriginalName();
         $request->file('image')->move(public_path('uploads/images'), $imagename);
 
-        // upload album
         $album = [];
-        if($request->hasFile('album')){
-        foreach($request->file('album') as $file){
-        $albumname = 'product_' . time() . '_' .$file->getClientOriginalName();
-        $file->move(public_path('uploads/images'), $albumname);
-        $album[] = $albumname;
+        if($request->hasFile('album')) {
+            foreach($request->file('album') as $file) {
+                $albumname = 'product_'.time().'_'.$file->getClientOriginalName();
+                $file->move(public_path('uploads/images'), $albumname);
+                $album[] = $albumname;
             }
         }
 
-        $album = implode(',' , $album);
+        $album = implode(',', $album);
 
 
-       $Product =  Product::create([
+        $product = Product::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'image' => $imagename,
@@ -86,21 +89,10 @@ class ProductsController extends Controller
             'category_id' => $request->category_id,
         ]);
 
-        // $i = 0;
-        // foreach($request->fname as $item){
-        //   Feature::create([
-        //     'name' => $request->fname[$i],
-        //     'value' => $request->fvalue[$i],
-        //     'type' => $request->ftype[$i],
-        //     'Product_id' => $Product->id
-        //   ]);
-        //   $i++;
-        // }
 
 
-        return redirect()->route('admin.products.index')
-            ->with('msg', 'Product added successfully')
-            ->with('type', 'success');
+
+        return redirect()->route('admin.products.index')->with('msg', 'Product added successfully')->with('type', 'success');
     }
 
     /**
@@ -123,9 +115,10 @@ class ProductsController extends Controller
     public function edit($id)
     {
         $categories = Category::all();
-        $discount = Discount::all();
-        $product = Product::findorFail($id);
-        return view('admin.products.edit', compact('categories', 'discount', 'product'));
+        $discounts = Discount::all();
+        $product = Product::findOrFail($id);
+
+        return view('admin.products.edit', compact('categories', 'discounts', 'product'));
     }
 
     /**
@@ -145,43 +138,33 @@ class ProductsController extends Controller
             'quantity' => 'required',
             'category_id' => 'required|exists:categories,id',
         ]);
-        $product = Product::findorFail($id);
+
+        $product = Product::findOrFail($id);
+
         $imagename = $product->image;
 
-        if ($request->hasFile('image')) {
-            File::delete(public_path('uploads/images/' . $product->image));
-        // upload image
-            $imagename = 'product_' . time() . '_' . $request->file('image')->getClientOriginalName();
+        if($request->hasFile('image')) {
+            File::delete(public_path('uploads/images/'.$product->image ));
+            // upload image
+            $imagename = 'product_'.time().'_'.$request->file('image')->getClientOriginalName();
             $request->file('image')->move(public_path('uploads/images'), $imagename);
-        } else {
         }
+
 
         $product->update([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'image' => $imagename,
-           'content' => $request->content,
+            'content' => $request->content,
             'price' => $request->price,
             'quantity' => $request->quantity,
             'discount' => $request->discount,
             'category_id' => $request->category_id,
         ]);
 
-        // Feature::where('product_id', $product->id)->delete();
-        // $i = 0;
-        // foreach($request->fname as $item) {
-        //     Feature::create([
-        //         'name' => $request->fname[$i],
-        //         'value' => $request->fvalue[$i],
-        //         'type' => $request->ftype[$i],
-        //         'product_id' => $product->id
-        //     ]);
-        //     $i++;
-        // }
 
-        return redirect()->route('admin.products.index')
-            ->with('msg', 'Product update successfully')
-            ->with('type', 'info');
+
+        return redirect()->route('admin.products.index')->with('msg', 'Product added successfully')->with('type', 'success');
     }
 
     /**
@@ -193,12 +176,11 @@ class ProductsController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
-        File::delete(public_path('uploads/images/' . $product->image));
+
+        File::delete(public_path('uploads/images/'.$product->image ));
 
         $product->delete();
-        return redirect()->route('admin.products.index')
-            ->with('msg', 'product deleted successfully')
-            ->with('type', 'danger');
+
+        return redirect()->route('admin.products.index')->with('msg', 'Product deleted successfully')->with('type', 'danger');
     }
 }
-

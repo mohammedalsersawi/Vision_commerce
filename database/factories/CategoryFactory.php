@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use Stringable;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -15,11 +14,11 @@ class CategoryFactory extends Factory
      */
     public function definition()
     {
-        $title = $this->faker->words(4 , true);
+        $title = $this->faker->words(2, true);
         return [
             'name' => $title,
             'slug' => Str::slug($title),
-            'image' => $this->faker->imageUrl(),
+            'image' => $this->faker->imageUrl()
         ];
     }
 }

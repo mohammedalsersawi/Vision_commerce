@@ -1,17 +1,21 @@
-
-
 @extends('front.master')
-@section('title' , 'Contact | ' . env('APP_NAME'))
+
+@section('title', 'Contact | ' . env('APP_NAME'))
+
 @section('styles')
+
 <style>
-.contact-form form input , .contact-form form textarea{
+
+.contact-form form input, .contact-form form textarea {
     margin-bottom: 0;
 }
 
 </style>
+
 @stop
 
 @section('content')
+
 @include('front.parts.inner-hero')
 
     <!-- Breadcrumb Section Begin -->
@@ -97,40 +101,33 @@
                     </div>
                 </div>
             </div>
-            {{-- @include('admin.errors')--}}
+            {{-- @include('admin.errors') --}}
             <form action="{{ route('site.contactus') }}" method="POST">
                 @csrf
+
                 <div class="row">
                     <div class="col-lg-6 col-md-6 mb-4">
-                        <input type="text" placeholder="Your name" name="name"
-                        class="form-control @error('name')  is-invalid @enderror"
-                        value="{{ old('name') }}">
-
+                        <input type="text" name="name" placeholder="Your name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}">
                         @error('name')
-                         <small class="invalid-feedback">{{ $message }}</small>
+                            <small class="invalid-feedback">{{ $message }}</small>
                         @enderror
                     </div>
-
                     <div class="col-lg-6 col-md-6 mb-4">
-                        <input type="text" placeholder="Your Email" name="email"
-                        class="form-control @error('email')  is-invalid @enderror"
-                        value="{{ old('email') }}">
-
+                        <input type="text" name="email" placeholder="Your Email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}">
                         @error('email')
-                         <small class="invalid-feedback">{{ $message }}</small>
+                            <small class="invalid-feedback">{{ $message }}</small>
                         @enderror
                     </div>
-                    <div class="col-lg-12  ">
-                        <textarea placeholder="Your message" name="message"
-                        class="form-control @error('message')  is-invalid @enderror">{{old('message')}}</textarea>
-                    @error('message')
-                    <small class="invalid-feedback">{{ $message }}</small>
-                   @enderror
+                    <div class="col-lg-12">
+                        <textarea placeholder="Your message" name="message" class="form-control @error('message') is-invalid @enderror">{{ old('message') }}</textarea>
+                        @error('message')
+                            <small class="invalid-feedback">{{ $message }}</small>
+                        @enderror
 
-                    <div class="text-right mt-4">
-                        <button type="submit" class="w-25 site-btn">SEND MESSAGE</button>
+                        <div class="text-right mt-4">
+                            <button type="submit" class=" w-25 site-btn">SEND MESSAGE</button>
+                        </div>
 
-                    </div>
                     </div>
                 </div>
             </form>
@@ -139,14 +136,15 @@
     <!-- Contact Form End -->
 @stop
 
-@section('script')
+@section('scripts')
+
 <script>
-    if($('#has-error').length > 0){
-        $('html , body').animate({
-        scrollTop : $('#has-error').offset().top
-    },1000)
-}
+    if($('#has-error').length > 0) {
+        $('html, body').animate({
+            scrollTop: $('#has-error').offset().top
+        }, 1000)
+    }
 
 </script>
 
-@endsection
+@stop

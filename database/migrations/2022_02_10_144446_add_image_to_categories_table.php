@@ -16,7 +16,6 @@ class AddImageToCategoriesTable extends Migration
         Schema::table('categories', function (Blueprint $table) {
             $table->string('image')->after('slug');
         });
-
     }
 
     /**
